@@ -1,0 +1,45 @@
+
+syntax = "proto3";
+
+package auth;
+
+option go_package="authservice/codegen";
+
+service Auth {
+
+    rpc Registration(RegReq) returns(RegResp);
+    rpc Login(LoginReq) returns (LoginResp);
+    rpc UpdateJwt(UpdateJwtReq) returns (UpdateJwtResp);
+
+}
+
+message RegReq {
+
+    string Login = 1;
+    string Password = 2;
+    string Email = 3;
+    string Name = 4;
+
+}
+
+message RegResp {
+}
+
+message LoginReq {
+    string Login = 1;
+    string Password = 2;
+}
+
+message LoginResp {
+    string Jwt = 1;
+    string RefreshToken = 2;
+}
+
+message UpdateJwtReq {
+    string RefreshToken = 1;
+}
+
+message UpdateJwtResp {
+    string Jwt = 1;
+    string RefreshToken = 2;
+}
