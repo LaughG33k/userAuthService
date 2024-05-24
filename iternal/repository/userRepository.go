@@ -11,21 +11,19 @@ import (
 )
 
 type UserRepository struct {
-	ctx    context.Context
 	client postgresql.Client
 }
 
-func NewUserRepostiroy(ctx context.Context, client postgresql.Client) *UserRepository {
+func NewUserRepostiroy(client postgresql.Client) *UserRepository {
 	return &UserRepository{
 
-		ctx:    ctx,
 		client: client,
 	}
 }
 
-func (r *UserRepository) CreateUser(login, password, name, email string) error {
+func (r *UserRepository) CreateUser(ctx context.Context, login, password, name, email string) error {
 
-	if _, err := r.client.Exec(r.ctx, "insert into users(login, password, name, email) values($1, $2, $3, $4);", login, password, name, email); err != nil {
+	if _, err := r.client.Exec(ctx, "insert into users(login, password, name, email) values($1, $2, $3, $4);", login, password, name, email); err != nil {
 
 		var pgError *pgconn.PgError
 
@@ -40,11 +38,11 @@ func (r *UserRepository) CreateUser(login, password, name, email string) error {
 	return nil
 }
 
-func (r *UserRepository) CheckUserByLP(login, password string) (string, error) {
+func (r *UserRepository) CheckUserByLP(ctx context.Context, login, password string) (string, error) {
 
 	uuid := ""
 
-	if err := r.client.QueryRow(r.ctx, "select uuid from users where login=$1 and password=$2;", login, password).Scan(&uuid); err != nil {
+	if err := r.client.QueryRow(ctx, "select uuid from users where login=$1 and password=$2;", login, password).Scan(&uuid); err != nil {
 
 		var pgError *pgconn.PgError
 

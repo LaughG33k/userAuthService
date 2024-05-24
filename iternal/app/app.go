@@ -1,6 +1,8 @@
 package app
 
 import (
+	"time"
+
 	"github.com/LaughG33k/userAuthService/iternal"
 	"github.com/LaughG33k/userAuthService/iternal/dbClient/postgresql"
 	grpcserver "github.com/LaughG33k/userAuthService/iternal/grpcServer"
@@ -18,9 +20,10 @@ import (
 )
 
 type AppConfig struct {
-	UserDB      DBCSettings        `json:"user_db"`
-	GrpcServer  GrpcServerSettings `json:"grpc_server"`
-	ServiceUuid string             `json:"service_uuid"`
+	UserDB           DBCSettings        `json:"user_db"`
+	GrpcServer       GrpcServerSettings `json:"grpc_server"`
+	ServiceUuid      string             `json:"service_uuid"`
+	OperationTimeout int                `json:"operation_timeout"`
 }
 
 type DBCSettings struct {
@@ -65,11 +68,13 @@ func Run() {
 		return
 	}
 
-	userRepository := repository.NewUserRepostiroy(ctx, userDb)
-	rtRepository := repository.NewRefreshTokenRepostiroy(ctx, userDb)
+	userRepository := repository.NewUserRepostiroy(userDb)
+	rtRepository := repository.NewRefreshTokenRepostiroy(userDb)
 
 	jwtWorker := iternal.NewJwtWorker(appCfg.ServiceUuid)
 	authHandler := handler.NewAuthHandler(userRepository, rtRepository, jwtWorker)
+
+	authHandler.OperationTimeout = time.Duration(appCfg.OperationTimeout)
 
 	server := grpcserver.NewServer(
 		ctx,

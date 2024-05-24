@@ -15,9 +15,10 @@ import (
 
 type GrpcAuthHandler struct {
 	codegen.UnimplementedAuthServer
-	userRepository *repository.UserRepository
-	rtRepository   *repository.RefreshTokenRepository
-	jwtWorker      *jwt.JwtWorker
+	OperationTimeout time.Duration
+	userRepository   *repository.UserRepository
+	rtRepository     *repository.RefreshTokenRepository
+	jwtWorker        *jwt.JwtWorker
 }
 
 func NewAuthHandler(userRepository *repository.UserRepository, refreshTokenRepository *repository.RefreshTokenRepository, jwtWorker *jwt.JwtWorker) *GrpcAuthHandler {
@@ -36,7 +37,11 @@ func (h *GrpcAuthHandler) Registration(ctx context.Context, in *codegen.RegReq) 
 		return nil, status.Errorf(codes.InvalidArgument, "the length of the entered data exceeds the possible length")
 	}
 
-	err := h.userRepository.CreateUser(in.Login, in.Password, in.Name, in.Email)
+	tm, canc := context.WithTimeout(ctx, h.OperationTimeout)
+
+	defer canc()
+
+	err := h.userRepository.CreateUser(tm, in.Login, in.Password, in.Name, in.Email)
 
 	if err != nil {
 
@@ -55,7 +60,11 @@ func (h *GrpcAuthHandler) Login(ctx context.Context, in *codegen.LoginReq) (*cod
 		return nil, status.Errorf(codes.InvalidArgument, "the length of the entered data exceeds the possible length")
 	}
 
-	uuid, err := h.userRepository.CheckUserByLP(in.Login, in.Password)
+	tm, canc := context.WithTimeout(ctx, h.OperationTimeout)
+
+	defer canc()
+
+	uuid, err := h.userRepository.CheckUserByLP(tm, in.Login, in.Password)
 
 	if err != nil {
 
@@ -68,7 +77,7 @@ func (h *GrpcAuthHandler) Login(ctx context.Context, in *codegen.LoginReq) (*cod
 
 	rt := pkg.GenerateRefreshToken(20)
 
-	err = h.rtRepository.CreateRefreshToken("", rt, uuid, time.Now().Add(24*time.Hour*15).Unix())
+	err = h.rtRepository.CreateRefreshToken(tm, "", rt, uuid, time.Now().Add(24*time.Hour*15).Unix())
 
 	if err != nil {
 		return nil, status.Error(codes.Internal, "server error")
@@ -88,7 +97,11 @@ func (h *GrpcAuthHandler) Login(ctx context.Context, in *codegen.LoginReq) (*cod
 }
 func (h *GrpcAuthHandler) UpdateJwt(ctx context.Context, in *codegen.UpdateJwtReq) (*codegen.UpdateJwtResp, error) {
 
-	uuid, timeLife, err := h.rtRepository.FindRefreshToken(in.RefreshToken)
+	tm, canc := context.WithTimeout(ctx, h.OperationTimeout)
+
+	defer canc()
+
+	uuid, timeLife, err := h.rtRepository.FindRefreshToken(tm, in.RefreshToken)
 
 	if err != nil {
 
@@ -105,7 +118,7 @@ func (h *GrpcAuthHandler) UpdateJwt(ctx context.Context, in *codegen.UpdateJwtRe
 
 	rt := pkg.GenerateRefreshToken(20)
 
-	if err = h.rtRepository.CreateRefreshToken(in.RefreshToken, rt, uuid, time.Now().Add(24*time.Hour*15).Unix()); err != nil {
+	if err = h.rtRepository.CreateRefreshToken(tm, in.RefreshToken, rt, uuid, time.Now().Add(24*time.Hour*15).Unix()); err != nil {
 		return nil, status.Errorf(codes.Internal, "server error")
 	}
 
