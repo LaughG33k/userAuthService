@@ -2,6 +2,7 @@ package handler
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	jwt "github.com/LaughG33k/userAuthService/iternal"
@@ -32,6 +33,7 @@ func NewAuthHandler(userRepository *repository.UserRepository, refreshTokenRepos
 }
 
 func (h *GrpcAuthHandler) Registration(ctx context.Context, in *codegen.RegReq) (*codegen.RegResp, error) {
+	fmt.Println("1")
 
 	if len(in.Login) > 30 || len(in.Password) > 30 || len(in.Name) > 30 || len(in.Email) > 256 {
 		return nil, status.Errorf(codes.InvalidArgument, "the length of the entered data exceeds the possible length")
@@ -41,16 +43,16 @@ func (h *GrpcAuthHandler) Registration(ctx context.Context, in *codegen.RegReq) 
 
 	defer canc()
 
-	err := h.userRepository.CreateUser(tm, in.Login, in.Password, in.Name, in.Email)
+	h.userRepository.CreateUser(tm, in.Login, in.Password, in.Name, in.Email)
 
-	if err != nil {
+	// if err != nil {
 
-		if err.Error() == "23505" {
-			return nil, status.Errorf(codes.AlreadyExists, "")
-		}
+	// 	if err.Error() == "23505" {
+	// 		return nil, status.Errorf(codes.AlreadyExists, "")
+	// 	}
 
-		return nil, status.Error(codes.Internal, err.Error())
-	}
+	// 	return nil, status.Error(codes.Internal, err.Error())
+	// }
 
 	return &codegen.RegResp{}, nil
 }

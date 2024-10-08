@@ -4,9 +4,6 @@ import (
 	"context"
 	"net"
 
-	"github.com/LaughG33k/userAuthService/iternal/handler"
-	"github.com/LaughG33k/userAuthService/pkg/grpc/codegen/authservice/authservice/codegen"
-
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/recovery"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
@@ -20,7 +17,7 @@ type GrpcServer struct {
 	addr   string
 }
 
-func NewServer(ctx context.Context, logger *zap.Logger, addr string, maxConcConns int, authHandler *handler.GrpcAuthHandler) *GrpcServer {
+func NewServer(ctx context.Context, logger *zap.Logger, addr string, maxConcConns int) *GrpcServer {
 
 	recoveryOpts := []recovery.Option{
 		recovery.WithRecoveryHandler(func(p interface{}) (err error) {
@@ -37,8 +34,6 @@ func NewServer(ctx context.Context, logger *zap.Logger, addr string, maxConcConn
 		grpc.MaxConcurrentStreams(uint32(maxConcConns)),
 		grpc.NumStreamWorkers(uint32(maxConcConns)),
 	)
-
-	codegen.RegisterAuthServer(server, authHandler)
 
 	return &GrpcServer{
 		ctx:    ctx,

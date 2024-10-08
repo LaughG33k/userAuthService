@@ -9,8 +9,14 @@ service Auth {
 
     rpc Registration(RegReq) returns(RegResp);
     rpc Login(LoginReq) returns (LoginResp);
-    rpc UpdateJwt(UpdateJwtReq) returns (UpdateJwtResp);
+    rpc UpdateJwt(TokenPair) returns (TokenPair);
 
+}
+
+message FingerPrint {
+    string Addr = 1; 
+    string Browser = 2;
+    string Device = 3;
 }
 
 message RegReq {
@@ -28,6 +34,8 @@ message RegResp {
 message LoginReq {
     string Login = 1;
     string Password = 2;
+    FingerPrint FingerPrint = 3;
+    
 }
 
 message LoginResp {
@@ -35,11 +43,9 @@ message LoginResp {
     string RefreshToken = 2;
 }
 
-message UpdateJwtReq {
-    string RefreshToken = 1;
-}
-
-message UpdateJwtResp {
+message TokenPair {
     string Jwt = 1;
     string RefreshToken = 2;
+
 }
+

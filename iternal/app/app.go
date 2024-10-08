@@ -41,7 +41,7 @@ type GrpcServerSettings struct {
 
 func Run() {
 
-	cfg, err := os.ReadFile("/Users/user/Desktop/docker_user_vol/cfg/userAuthService/config.json")
+	cfg, err := os.ReadFile("/Users/user/Desktop/docker_user_vol/cfg/authservice/config.json")
 	logger := initLogger()
 
 	if logger == nil {
@@ -97,7 +97,7 @@ func initLogger() *zap.Logger {
 	config := zap.NewProductionEncoderConfig()
 	config.EncodeTime = zapcore.ISO8601TimeEncoder
 	fileEncoder := zapcore.NewJSONEncoder(config)
-	logFile, err := os.OpenFile("/Users/user/Desktop/messengerMicroservice/github.com/LaughG33k/userAuthService/log.json", os.O_APPEND|os.O_WRONLY, 0644)
+	logFile, err := os.OpenFile("/Users/user/Desktop/github.com/LaughG33k/userAuthService/log.json", os.O_APPEND|os.O_WRONLY, 0644)
 
 	if err != nil {
 		log.Panic(err)
