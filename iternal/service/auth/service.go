@@ -6,15 +6,15 @@ import (
 	"github.com/LaughG33k/userAuthService/pkg"
 )
 
-type Auth struct {
+type Service struct {
 	userRepo    repository.UserRepository
 	sessionRepo repository.SessionRepository
 	jwtGen      pkg.JwtGenerator
 	jwtParse    pkg.JwtParser
 }
 
-func New(userRepo *repository.UserRepository, sessionRepo *repository.SessionRepository, jwtGen pkg.JwtGenerator, jwtParse pkg.JwtParser) service.Auth {
-	return &Auth{
+func New(userRepo repository.UserRepository, sessionRepo repository.SessionRepository, jwtGen pkg.JwtGenerator, jwtParse pkg.JwtParser) service.Auth {
+	return &Service{
 		userRepo:    userRepo,
 		sessionRepo: sessionRepo,
 	}

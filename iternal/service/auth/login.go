@@ -8,15 +8,15 @@ import (
 	"github.com/golang-jwt/jwt"
 )
 
-func (a *Auth) Login(ctx context.Context, user model.User, fp model.FingerPrint) (model.TokenPair, error) {
+func (s *Service) Login(ctx context.Context, user model.User, fp model.FingerPrint) (model.TokenPair, error) {
 
-	uuid, err := a.userRepo.GetUuidByLP(ctx, user)
+	uuid, err := s.userRepo.GetUuidByLP(ctx, user)
 
 	if err != nil {
 		return model.TokenPair{}, err
 	}
 
-	jwt, err := a.jwtGen.NewToken(jwt.MapClaims{
+	jwt, err := s.jwtGen.NewToken(jwt.MapClaims{
 		"uuid": uuid,
 	})
 
@@ -26,7 +26,7 @@ func (a *Auth) Login(ctx context.Context, user model.User, fp model.FingerPrint)
 
 	refresh := pkg.GenerateRefreshToken(30)
 
-	if err := a.sessionRepo.Create(ctx, model.Session{
+	if err := s.sessionRepo.Create(ctx, model.Session{
 		Owner: uuid,
 		Token: refresh,
 		FingerPrint: model.FingerPrint{

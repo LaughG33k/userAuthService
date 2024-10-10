@@ -6,9 +6,9 @@ import (
 	"github.com/LaughG33k/userAuthService/iternal/model"
 )
 
-func (a *Auth) Registration(ctx context.Context, user model.User) error {
+func (s *Service) Registration(ctx context.Context, user model.User) error {
 
-	if err := a.userRepo.Create(ctx, user); err != nil {
+	if err := s.userRepo.Create(ctx, user); err != nil {
 		return err
 	}
 
