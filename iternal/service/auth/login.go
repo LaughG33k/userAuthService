@@ -8,9 +8,9 @@ import (
 	"github.com/golang-jwt/jwt"
 )
 
-func (s *Service) Login(ctx context.Context, user model.User, fp model.FingerPrint) (model.TokenPair, error) {
+func (s *Service) Login(ctx context.Context, login, password string, fp model.FingerPrint) (model.TokenPair, error) {
 
-	uuid, err := s.userRepo.GetUuidByLP(ctx, user)
+	uuid, err := s.userRepo.GetUuidByLP(ctx, login, password)
 
 	if err != nil {
 		return model.TokenPair{}, err

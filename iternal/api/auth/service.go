@@ -1,13 +1,20 @@
 package auth
 
-import "google.golang.org/grpc"
+import (
+	"github.com/LaughG33k/userAuthService/iternal/service"
+	"github.com/LaughG33k/userAuthService/pkg/codegen"
+	"google.golang.org/grpc"
+)
 
 type AuthApi struct {
-	server *grpc.Server
+	codegen.UnimplementedAuthServer
+	authService service.Auth
 }
 
-func New(server *grpc.Server) *AuthApi {
-	return &AuthApi{
-		server: server,
+func New(authService service.Auth, server *grpc.Server) *AuthApi {
+	api := &AuthApi{
+		authService: authService,
 	}
+
+	return api
 }

@@ -33,11 +33,11 @@ func (r *UserRepository) Create(ctx context.Context, user model.User) error {
 	return nil
 }
 
-func (r *UserRepository) GetUuidByLP(ctx context.Context, user model.User) (string, error) {
+func (r *UserRepository) GetUuidByLP(ctx context.Context, login, password string) (string, error) {
 
 	uuid := ""
 
-	if err := r.client.QueryRow(ctx, "select uuid from users where login=$1 and password=$2;", user.Login, user.Password).Scan(&uuid); err != nil {
+	if err := r.client.QueryRow(ctx, "select uuid from users where login=$1 and password=$2;", login, password).Scan(&uuid); err != nil {
 
 		var pgError *pgconn.PgError
 

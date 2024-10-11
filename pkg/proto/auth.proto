@@ -8,9 +8,9 @@ option go_package="authservice/codegen";
 service Auth {
 
     rpc Registration(RegReq) returns(Empty);
-    rpc Login(LoginReq) returns (LoginResp);
+    rpc Login(LoginReq) returns (TokenPair);
     rpc Logout(TokenPair) returns(Empty);
-    rpc UpdateSession(TokenPair) returns (TokenPair);
+    rpc UpdateSession(TokenPairForUpdate) returns (TokenPair);
 
 }
 
@@ -39,14 +39,15 @@ message LoginReq {
     
 }
 
-message LoginResp {
-    string Jwt = 1;
-    string RefreshToken = 2;
-}
+
 
 message TokenPair {
     string Jwt = 1;
     string RefreshToken = 2;
+}
 
+message TokenPairForUpdate {
+    TokenPair pair = 1;
+    FingerPrint FingerPrint = 2;
 }
 

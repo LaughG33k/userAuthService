@@ -43,6 +43,10 @@ func NewServer(ctx context.Context, logger *zap.Logger, addr string, maxConcConn
 
 }
 
+func (s *GrpcServer) GetServer() grpc.ServiceRegistrar {
+	return s.server
+}
+
 func (s *GrpcServer) Start() error {
 
 	l, err := net.Listen("tcp", s.addr)

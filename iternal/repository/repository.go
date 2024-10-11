@@ -8,7 +8,7 @@ import (
 
 type UserRepository interface {
 	Create(context.Context, model.User) error
-	GetUuidByLP(context.Context, model.User) (string, error)
+	GetUuidByLP(ctx context.Context, login, password string) (string, error)
 }
 
 type SessionRepository interface {
