@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/LaughG33k/userAuthService/iternal/config"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgconn"
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -18,9 +19,9 @@ type Client interface {
 	CopyFrom(ctx context.Context, tableName pgx.Identifier, columnNames []string, rowSrc pgx.CopyFromSource) (int64, error)
 }
 
-func NewClient(ctx context.Context, trysToConnNum int, name, password, host, port, db string) (pool *pgxpool.Pool, err error) {
+func NewClient(ctx context.Context, trysToConnNum int, cfg config.DBConfig) (pool *pgxpool.Pool, err error) {
 
-	connString := fmt.Sprintf("postgres://%s:%s@%s:%s/%s", name, password, host, port, db)
+	connString := fmt.Sprintf("postgres://%s:%s@%s:%d/%s", cfg.User, cfg.Password, cfg.Host, cfg.Port, cfg.DB)
 
 	err = trysToConnect(func() error {
 

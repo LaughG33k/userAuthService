@@ -16,5 +16,7 @@ func New(authService service.Auth, server *grpc.Server) *AuthApi {
 		authService: authService,
 	}
 
+	codegen.RegisterAuthServer(server, api)
+
 	return api
 }

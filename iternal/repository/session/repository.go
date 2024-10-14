@@ -46,7 +46,7 @@ func (r *SessionRepository) Get(ctx context.Context, token string) (model.Sessio
 	return session, nil
 }
 
-func NewRefreshTokenRepostiroy(client postgresql.Client) repository.SessionRepository {
+func NewSessionRepository(client postgresql.Client) repository.SessionRepository {
 	return &SessionRepository{
 		client: client,
 	}

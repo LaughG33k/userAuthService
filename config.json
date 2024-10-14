@@ -1,0 +1,29 @@
+{
+
+    "app": {
+
+        "addr": "127.0.0.1:8080",
+        "readTimeout": "45s",
+        "writeTimeout": "45s",
+        "userDB": {
+
+            "host": "127.0.0.1",
+            "port": 5432,
+            "user": "postgres",
+            "password": "123456",
+            "db": "user_db"
+
+        },
+        "sessionDB": {
+            "host": "127.0.0.1",
+            "port": 5432,
+            "user": "postgres",
+            "password": "123456",
+            "db": "session_db"
+        }
+
+
+    }
+
+
+}
